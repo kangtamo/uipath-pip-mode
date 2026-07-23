@@ -47,9 +47,9 @@
         </ui:Target>
       </ui:TypeInto.Target>
     </ui:TypeInto>
-    <While DisplayName="Do background work for ~20s" sap2010:WorkflowViewState.IdRef="While_1">
+    <While DisplayName="Repeatedly seize the foreground (~20s)" sap2010:WorkflowViewState.IdRef="While_1">
       <While.Condition>[counter &lt; totalSteps]</While.Condition>
-      <Sequence DisplayName="Work step" sap2010:WorkflowViewState.IdRef="Sequence_2">
+      <Sequence DisplayName="Takeover step" sap2010:WorkflowViewState.IdRef="Sequence_2">
         <Assign DisplayName="counter = counter + 1" sap2010:WorkflowViewState.IdRef="Assign_1">
           <Assign.To>
             <OutArgument x:TypeArguments="x:Int32">[counter]</OutArgument>
@@ -58,8 +58,17 @@
             <InArgument x:TypeArguments="x:Int32">[counter + 1]</InArgument>
           </Assign.Value>
         </Assign>
-        <ui:LogMessage DisplayName="Log - progress" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Processing step &quot; + counter.ToString() + &quot; of &quot; + totalSteps.ToString() + &quot; - meanwhile your desktop stays fully usable.&quot;]" />
-        <Delay Duration="00:00:03" DisplayName="Delay - simulate work" sap2010:WorkflowViewState.IdRef="Delay_2" />
+        <ui:Activate ContinueOnError="True" DisplayName="Bring Notepad to the foreground" sap2010:WorkflowViewState.IdRef="Activate_1">
+          <ui:Activate.Target>
+            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="10000" WaitForReady="INTERACTIVE">
+              <ui:Target.Selector>
+                <InArgument x:TypeArguments="x:String">&lt;wnd app='notepad.exe' /&gt;</InArgument>
+              </ui:Target.Selector>
+            </ui:Target>
+          </ui:Activate.Target>
+        </ui:Activate>
+        <ui:LogMessage DisplayName="Log - progress" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Step &quot; + counter.ToString() + &quot; of &quot; + totalSteps.ToString() + &quot;: brought Notepad to the foreground. Without PiP this keeps stealing focus from whatever you are doing; with PiP it happens in the isolated desktop.&quot;]" />
+        <Delay Duration="00:00:03" DisplayName="Delay - hold the foreground" sap2010:WorkflowViewState.IdRef="Delay_2" />
       </Sequence>
     </While>
     <ui:LogMessage DisplayName="Log - Completed" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="PiP New Desktop demo finished. The isolated desktop can now close. Your main desktop was never blocked." />
