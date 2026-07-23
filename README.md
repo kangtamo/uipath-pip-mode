@@ -28,14 +28,14 @@ mouse, so you can keep working while the robot works in its own desktop.
 4. Loops for ~20 seconds logging progress (simulated background work).
 5. Logs a completion message.
 
-The Type Into step is deliberately configured to use **hardware input** (`SimulateType=False`)
-with **`ActivateBefore=True`**. This forces Notepad to the **foreground** and sends **real
-keyboard events** — which is what makes the with-PiP vs without-PiP difference obvious:
+The Type Into step uses the **Simulate** input method (`SimulateType=True`). Simulate sends
+text directly to the target control's API, so it works **regardless of which desktop is in the
+foreground** — which is why it types correctly inside the isolated PiP desktop.
 
-- **Without PiP** — the automation grabs your foreground window and keyboard mid-run. If you
-  are typing in another app, the keystrokes land in Notepad instead. Clearly disruptive.
-- **With PiP New Desktop** — the exact same activation and keystrokes happen inside the
-  isolated desktop, so your real desktop keeps its focus and keyboard. You work uninterrupted.
+> **Why not hardware keystrokes?** Windows delivers real (hardware) keyboard events only to the
+> *active input desktop*. In PiP New Desktop the isolated desktop is **not** the active input
+> desktop, so hardware keystrokes never reach the PiP Notepad (you would see an empty Notepad).
+> Simulate/Window Messages are the input methods that work in a background/isolated desktop.
 
 Same automation, run two ways — see [Demonstrating the difference](#demonstrating-the-difference).
 
@@ -84,13 +84,34 @@ Same automation, run two ways — see [Demonstrating the difference](#demonstrat
 
 ## Demonstrating the difference
 
-Run the **same** process twice and try to keep working (e.g. type into another app) during each run:
+Run the **same** process twice and keep working during each run:
 
-1. **Without PiP** — run normally from Assistant/Studio. Notepad jumps to the foreground and the
-   robot types with real keystrokes, hijacking your keyboard. Your own typing gets interrupted.
+1. **Without PiP** — run normally from Assistant/Studio. Notepad opens on your desktop and the
+   robot types into it. Even with Simulate, the window occupies your screen and the robot is
+   clearly operating **on the desktop you are trying to use**.
 2. **With PiP New Desktop** — enable PiP New Desktop (Option A above) and run again. The identical
-   activation and typing happen in the isolated desktop; your foreground app and keyboard are
-   untouched, and no password was required.
+   work happens in the **isolated desktop**; your real desktop is free, and no password was
+   required.
+
+> **Note on the "keyboard hijack" effect:** A run that both (a) types correctly inside PiP and
+> (b) physically steals your keyboard when *not* in PiP is not possible from a single Type Into
+> configuration — the two behaviors need opposite input methods (Simulate works in PiP but does
+> not steal focus; Hardware Events steal focus but produce an empty Notepad in PiP). This project
+> uses **Simulate** so the automation works correctly in PiP. See
+> [Choosing the demo emphasis](#choosing-the-demo-emphasis).
+
+## Choosing the demo emphasis
+
+| You want to show… | Type Into input method | Works in PiP? | Steals keyboard w/o PiP? |
+|---|---|---|---|
+| **The automation runs correctly in PiP** (default here) | **Simulate** (`SimulateType=True`) | ✅ Yes | No |
+| **How disruptive it is without PiP** | **Hardware Events** (`SimulateType=False`, `SendWindowMessages=False`) | ❌ Empty Notepad | ✅ Yes |
+
+To emphasize disruption instead of correctness, set `SimulateType="False"` on the Type Into
+activity in [Main.xaml](Main.xaml). A stronger way to show isolation **without** relying on the
+keyboard-hijack trick: during the non-PiP run, keep working in another app and point out that
+Notepad is sitting on *your* screen and the robot is driving *your* desktop — then run it in PiP
+and show your desktop stays completely free.
 
 ## Files
 
