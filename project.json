@@ -3,8 +3,8 @@
   "description": "Attended demo showing the benefit of Picture in Picture 'New Desktop' mode: the automation runs in an isolated desktop inside your existing Windows session (no additional authentication), while you keep using your machine uninterrupted.",
   "main": "Main.xaml",
   "dependencies": {
-    "UiPath.System.Activities": "[24.10.5]",
-    "UiPath.UIAutomation.Activities": "[24.10.6]"
+    "UiPath.System.Activities": "[24.10.8]",
+    "UiPath.UIAutomation.Activities": "[24.10.17]"
   },
   "webServices": [],
   "entitiesStores": [],
