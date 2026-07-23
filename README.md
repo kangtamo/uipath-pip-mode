@@ -28,11 +28,16 @@ mouse, so you can keep working while the robot works in its own desktop.
 4. Loops for ~20 seconds logging progress (simulated background work).
 5. Logs a completion message.
 
-Every activity is **non-modal** and self-targeting (no dialogs that steal focus and no work
-against *your* desktop), which is what lets you keep using your machine uninterrupted. The
-Type Into step uses **SimulateType**, which sends text through the control's API rather than
-your physical keyboard — so it works even when Notepad is in the background and never fights
-you for keyboard focus.
+The Type Into step is deliberately configured to use **hardware input** (`SimulateType=False`)
+with **`ActivateBefore=True`**. This forces Notepad to the **foreground** and sends **real
+keyboard events** — which is what makes the with-PiP vs without-PiP difference obvious:
+
+- **Without PiP** — the automation grabs your foreground window and keyboard mid-run. If you
+  are typing in another app, the keystrokes land in Notepad instead. Clearly disruptive.
+- **With PiP New Desktop** — the exact same activation and keystrokes happen inside the
+  isolated desktop, so your real desktop keeps its focus and keyboard. You work uninterrupted.
+
+Same automation, run two ways — see [Demonstrating the difference](#demonstrating-the-difference).
 
 ## Requirements
 
@@ -76,6 +81,16 @@ you for keyboard focus.
 > ```
 > The **New Desktop vs Child Session** choice itself is made in **Assistant/Robot at run time**,
 > not in the project file.
+
+## Demonstrating the difference
+
+Run the **same** process twice and try to keep working (e.g. type into another app) during each run:
+
+1. **Without PiP** — run normally from Assistant/Studio. Notepad jumps to the foreground and the
+   robot types with real keystrokes, hijacking your keyboard. Your own typing gets interrupted.
+2. **With PiP New Desktop** — enable PiP New Desktop (Option A above) and run again. The identical
+   activation and typing happen in the isolated desktop; your foreground app and keyboard are
+   untouched, and no password was required.
 
 ## Files
 
