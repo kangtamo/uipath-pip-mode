@@ -38,6 +38,15 @@
     <ui:LogMessage DisplayName="Log - Starting in isolated desktop" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="PiP New Desktop demo started. This automation runs in an isolated desktop inside your CURRENT Windows session - no additional sign-in required. Keep working on your machine; you will not be interrupted." />
     <ui:StartProcess ContinueOnError="True" DisplayName="Open Notepad (in the isolated desktop)" FileName="notepad.exe" sap2010:WorkflowViewState.IdRef="StartProcess_1" />
     <Delay Duration="00:00:02" DisplayName="Delay - let Notepad open" sap2010:WorkflowViewState.IdRef="Delay_1" />
+    <ui:TypeInto ContinueOnError="True" DelayBetweenKeys="80" DisplayName="Type into Notepad (SimulateType)" sap2010:WorkflowViewState.IdRef="TypeInto_1" SendWindowMessages="False" SimulateType="True" Text="Hello from Picture in Picture (New Desktop mode)!&#xD;&#xA;&#xD;&#xA;I am running in an isolated desktop inside your existing Windows session.&#xD;&#xA;You can keep typing in YOUR desktop while this runs - the two do not fight over the keyboard or mouse.&#xD;&#xA;No extra password was needed to start me.&#xD;&#xA;">
+      <ui:TypeInto.Target>
+        <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Region="{x:Null}" TimeoutMS="30000" WaitForReady="INTERACTIVE">
+          <ui:Target.Selector>
+            <InArgument x:TypeArguments="x:String">&lt;wnd app='notepad.exe' /&gt;&lt;ctrl role='editable text' /&gt;</InArgument>
+          </ui:Target.Selector>
+        </ui:Target>
+      </ui:TypeInto.Target>
+    </ui:TypeInto>
     <While DisplayName="Do background work for ~20s" sap2010:WorkflowViewState.IdRef="While_1">
       <While.Condition>[counter &lt; totalSteps]</While.Condition>
       <Sequence DisplayName="Work step" sap2010:WorkflowViewState.IdRef="Sequence_2">

@@ -29,7 +29,10 @@ mouse, so you can keep working while the robot works in its own desktop.
 5. Logs a completion message.
 
 Every activity is **non-modal** and self-targeting (no dialogs that steal focus and no work
-against *your* desktop), which is what lets you keep using your machine uninterrupted.
+against *your* desktop), which is what lets you keep using your machine uninterrupted. The
+Type Into step uses **SimulateType**, which sends text through the control's API rather than
+your physical keyboard — so it works even when Notepad is in the background and never fights
+you for keyboard focus.
 
 ## Requirements
 
